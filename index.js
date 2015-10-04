@@ -1,11 +1,11 @@
+var fs = require('fs'), path = require('path');
+console.log('Loading event');
 
-var engine = require('./lib/engine'),
-    importPipe = require('./lib/import-pipe');
+var deciderCode = fs.readFileSync(path.join(__dirname, 'decider.js'), 'utf8');
+var runner = require('pipes2js').run;
 
-exports.run = engine.run;
-
-exports.importPipe = importPipe.importPipe;
-exports.fetchPipe = importPipe.fetchPipe;
-exports.pipe2decider = importPipe.pipe2decider;
-exports.conf2input = importPipe.conf2input;
-exports.pathsForTerminals = importPipe.pathsForTerminals;
+exports.handler = function(event, context) {
+	runner({}, deciderCode, function (err, results, state) {
+	  result = context.done(null, JSON.stringify(results, null, 3));
+	});
+};
